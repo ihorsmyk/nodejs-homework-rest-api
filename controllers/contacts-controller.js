@@ -1,6 +1,6 @@
 const { HttpError } = require("../helpers");
 const { ctrlWrapper } = require("../utils");
-const Contact = require("../models/contact");
+const { Contact } = require("../models");
 
 const getAll = async (req, res) => {
   const contacts = await Contact.find();
@@ -10,11 +10,10 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   const { id } = req.params;
   const contact = await Contact.findById(id);
-  // const contact = await Contact.findOne({ name: "Igor Smyk" });
   if (!contact) {
     throw HttpError(404, "Not found");
   }
-  res.json(contact);
+  res.status(201).json(contact);
 };
 
 const add = async (req, res) => {
@@ -22,34 +21,38 @@ const add = async (req, res) => {
   res.status(201).json(contact);
 };
 
-// const updateById = async (req, res) => {
-//   const { id } = req.params;
+const updateById = async (req, res) => {
+  const { id } = req.params;
+  const contact = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+  if (!contact) {
+    throw HttpError(404, "Not found");
+  }
+  res.status(201).json(contact);
+};
 
-//   const { name, email, phone } = req.body;
-//   const contact = await contactsService.updateContact(id, {
-//     name,
-//     email,
-//     phone,
-//   });
-//   if (!contact) {
-//     throw HttpError(404);
-//   }
-//   res.json(contact);
-// };
+const updateStatusById = async (req, res) => {
+  const { id } = req.params;
+  const contact = await Contact.findByIdAndUpdate(id, req.body, { new: true });
+  if (!contact) {
+    throw HttpError(404, "Not found");
+  }
+  res.status(201).json(contact);
+};
 
-// const removeById = async (req, res) => {
-//   const { id } = req.params;
-//   const contact = await contactsService.removeContact(id);
-//   if (!contact) {
-//     throw HttpError(404);
-//   }
-//   res.json(contact);
-// };
+const removeById = async (req, res) => {
+  const { id } = req.params;
+  const contact = await Contact.findByIdAndDelete(id);
+  if (!contact) {
+    throw HttpError(404, "Not found");
+  }
+  res.status(200).json({ message: "contact deleted" });
+};
 
 module.exports = {
   getAll: ctrlWrapper(getAll),
   getById: ctrlWrapper(getById),
   add: ctrlWrapper(add),
-  // update: ctrlWrapper(updateById),
-  // removeById: ctrlWrapper(removeById),
+  updateById: ctrlWrapper(updateById),
+  updateStatusById: ctrlWrapper(updateStatusById),
+  removeById: ctrlWrapper(removeById),
 };

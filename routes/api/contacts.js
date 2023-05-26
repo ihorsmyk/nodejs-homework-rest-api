@@ -5,21 +5,36 @@ const {
   getAll,
   getById,
   add,
-  // removeById,
-  // update,
+  updateById,
+  updateStatusById,
+  removeById,
 } = require("../../controllers");
 
-const { validateBody, checkBody } = require("../../middlewares");
-const { addSchema } = require("../../schemas/contacts");
+const {
+  validateBody,
+  isValidId,
+  isBody,
+  isBodyFavorite,
+} = require("../../middlewares");
+
+const { addSchema, updateStatusSchema } = require("../../schemas/contacts");
 
 router.get("/", getAll);
 
-router.get("/:id", getById);
+router.get("/:id", isValidId, getById);
 
-router.post("/", checkBody, validateBody(addSchema), add);
+router.post("/", isBody, validateBody(addSchema), add);
 
-// router.delete("/:id", removeById);
+router.put("/:id", isValidId, isBody, validateBody(addSchema), updateById);
 
-// router.put("/:id", checkBody, validateBody(addSchema), update);
+router.patch(
+  "/:id/favorite",
+  isValidId,
+  isBodyFavorite,
+  validateBody(updateStatusSchema),
+  updateStatusById
+);
+
+router.delete("/:id", isValidId, removeById);
 
 module.exports = router;
