@@ -2,21 +2,21 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getAll
-  // getById,
-  // add,
+  getAll,
+  getById,
+  add,
   // removeById,
   // update,
 } = require("../../controllers");
 
-// const { validateBody, checkBody } = require("../../middlewares");
-// const { addSchema } = require("../../schemas/contacts");
+const { validateBody, checkBody } = require("../../middlewares");
+const { addSchema } = require("../../schemas/contacts");
 
 router.get("/", getAll);
 
-// router.get("/:id", getById);
+router.get("/:id", getById);
 
-// router.post("/", checkBody, validateBody(addSchema), add);
+router.post("/", checkBody, validateBody(addSchema), add);
 
 // router.delete("/:id", removeById);
 

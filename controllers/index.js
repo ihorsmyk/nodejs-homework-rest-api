@@ -1,15 +1,15 @@
 const {
-  getAll
-  // getById,
-  // add,
+  getAll,
+  getById,
+  add,
   // update,
   // removeById,
 } = require("./contacts-controller");
 
 module.exports = {
   getAll,
-  // getById,
-  // add,
+  getById,
+  add,
   // update,
   // removeById,
 };

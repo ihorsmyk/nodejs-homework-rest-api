@@ -16,8 +16,6 @@ app.use(express.json());
 app.use("/api/contacts", contactsRouter);
 
 app.use((req, res) => {
-  console.log(req.body);
-
   res.status(404).json({ message: "Not found" });
 });
 
@@ -25,16 +23,5 @@ app.use((err, req, res, next) => {
   const { status = 500, message = "Internal error" } = err;
   res.status(status).json({ message });
 });
-
-// app.use((err, req, res, next) => {
-//   const { status = 400, message = "missing fields" } = err;
-//   res.status(status).json({ message });
-// });
-
-// app.use((err, req, res, next)=> {
-//     if(!req.body){
-//       res.status(400).json({ "message": "missing fields" });
-//     }
-// });
 
 module.exports = app;
