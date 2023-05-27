@@ -13,7 +13,7 @@ const getById = async (req, res) => {
   if (!contact) {
     throw HttpError(404, "Not found");
   }
-  res.status(201).json(contact);
+  res.status(200).json(contact);
 };
 
 const add = async (req, res) => {
