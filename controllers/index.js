@@ -2,7 +2,8 @@ const {
   getAll,
   getById,
   add,
-  update,
+  updateById,
+  updateStatusById,
   removeById,
 } = require("./contacts-controller");
 
@@ -10,6 +11,7 @@ module.exports = {
   getAll,
   getById,
   add,
-  update,
+  updateById,
+  updateStatusById,
   removeById,
 };
