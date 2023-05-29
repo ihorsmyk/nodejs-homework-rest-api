@@ -3,14 +3,15 @@ const { handleMongooseError } = require("../middlewares");
 
 const userSchema = new Schema(
   {
-    password: {
-      type: String,
-      required: [true, "Set password for user"],
-    },
     email: {
       type: String,
       required: [true, "Email is required"],
       unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Set password for user"],
+      minLength: 8,
     },
     subscription: {
       type: String,
@@ -20,7 +21,7 @@ const userSchema = new Schema(
     token: String,
   },
   {
-    versionKey: true,
+    versionKey: false,
     timestamps: true,
   }
 );
