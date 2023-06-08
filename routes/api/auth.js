@@ -6,13 +6,15 @@ const {
   login,
   getCurrentUser,
   logout,
+  updateAvatar,
 } = require("../../controllers");
-const { validateBody, isBody, authenticate } = require("../../middlewares");
+const { validateBody, isBody, authenticate, upload } = require("../../middlewares");
 const { userRegisterSchema, userloginSchema } = require("../../schemas");
 
 router.post("/register", isBody, validateBody(userRegisterSchema), register);
 router.post("/login", isBody, validateBody(userloginSchema), login);
+router.patch("/avatars", authenticate, upload.single('avatar'), updateAvatar);
 router.get("/current", authenticate, getCurrentUser);
 router.post("/logout", authenticate, logout);
-
+ 
 module.exports = router;

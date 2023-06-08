@@ -4,6 +4,7 @@ const { handleMongooseError } = require("../helpers/handleMongooseError");
 const { isValidId } = require("./isValidId");
 const { isBodyFavorite } = require("./isBodyFavorite");
 const { authenticate } = require("./authenticate");
+const { upload } = require("./upload");
 
 module.exports = {
   validateBody,
@@ -12,4 +13,5 @@ module.exports = {
   isValidId,
   isBodyFavorite,
   authenticate,
+  upload,
 };
