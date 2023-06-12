@@ -1,8 +1,9 @@
 const { contactAddSchema } = require("./contacts");
-const { userRegisterSchema, userloginSchema } = require("./users");
+const { userRegisterSchema, userloginSchema, emailSchema } = require("./users");
 
 module.exports = {
   contactAddSchema,
   userRegisterSchema,
   userloginSchema,
+  emailSchema,
 };
