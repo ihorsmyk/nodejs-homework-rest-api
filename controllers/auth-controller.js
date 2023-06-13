@@ -4,8 +4,9 @@ const gravatar = require("gravatar");
 const fs = require("fs").promises;
 const path = require("path");
 const Jimp = require("jimp");
+const { v4: uuidv4 } = require("uuid");
 
-const { HttpError } = require("../helpers");
+const { HttpError, sendEmail, createVerificationEmail } = require("../helpers");
 const { ctrlWrapper } = require("../utils");
 const { User } = require("../models/user");
 const { SECRET_KEY } = process.env;
@@ -20,12 +21,19 @@ const register = async (req, res) => {
   }
   const avatarURL = gravatar.url(email);
   const hashedPassword = await bcrypt.hash(password, 10);
+  const verificationToken = uuidv4();
   const newUser = await User.create({
     email,
     password: hashedPassword,
     subscription,
     avatarURL,
+    verificationToken,
   });
+  const verifyEmail = createVerificationEmail(
+    newUser.verificationToken,
+    newUser.email
+  );
+  await sendEmail(verifyEmail);
   res.status(201).json({
     user: {
       email: newUser.email,
@@ -40,6 +48,9 @@ const login = async (req, res) => {
   if (!user) {
     throw HttpError(401, "Email or password is wrong");
   }
+  if (!user.verify) {
+    throw HttpError(401, "Email is not verified");
+  }
   const passwordCompareResult = await bcrypt.compare(password, user.password);
   if (!passwordCompareResult) {
     throw HttpError(401, "Email or password is wrong");
@@ -53,6 +64,36 @@ const login = async (req, res) => {
       email: user.email,
       subscription: user.subscription,
     },
+  });
+};
+
+const verify = async (req, res) => {
+  const { verificationToken } = req.params;
+  const user = await User.findOne({ verificationToken });
+  if (!user) {
+    throw HttpError(401);
+  }
+  await User.findByIdAndUpdate(user._id, {
+    verify: true,
+    verificationToken: "",
+  });
+  res.json({
+    message: "Verification successful",
+  });
+};
+
+const resendVerifyEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw HttpError(404);
+  } else if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+  const verifyEmail = createVerificationEmail(user.verificationToken, email);
+  await sendEmail(verifyEmail);
+  res.json({
+    message: "Verification email sent",
   });
 };
 
@@ -91,4 +132,6 @@ module.exports = {
   getCurrentUser: ctrlWrapper(getCurrentUser),
   logout: ctrlWrapper(logout),
   updateAvatar: ctrlWrapper(updateAvatar),
+  verify: ctrlWrapper(verify),
+  resendVerifyEmail: ctrlWrapper(resendVerifyEmail),
 };
